@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {{movie.id}}
+    {{movie.title}}
+    {{movie.budget}}
+    {{movie.genres}}
+
+    {% if not context.is_favorite %}
+        <div>
+        <a href="/add_to_favorite/{{movie.id}}">Add to favorite</a>
+        </div>
+        {% else %}
+        <div>
+        <a href="/remove_from_favorite/{{movie.id}}">
+            Remove from favorites
+        </a>
+        </div>
+    {% endif %}
+</body>
+</html>
