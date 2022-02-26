@@ -10,10 +10,10 @@ urlpatterns = [
     path('number/<int:id>', views.number),
     path('index/', views.template_test),
     path('movies/<int:id>', views.get_movie_info),
+    path('movies/page/<int:page_number>/',views.get_movies),
     path('movies/', views.get_movies),
     path('post_movie/', views.post_movie),
     path('signin/',views.signin),
-
     path('add_to_favorite/<int:id>',
     views.add_to_favorite,
     name="Add to favorite"),

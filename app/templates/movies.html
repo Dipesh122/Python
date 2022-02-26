@@ -19,4 +19,18 @@
         <a href="/movies/{{movie.id}}/delete">Delete</a>
     </div>
     {% endfor %}
+    <div>
+        {% if pagination.current_page > 1 %}
+            <a href="/movies/page/{{pagination.previous_page}}">
+                Previous Page
+            </a>
+        {% endif %}
+
+        {% if pagination.current_page != pagination.last_page %}
+            <a href="/movies/page/{{pagination.next_page}}">
+                Next Page
+            </a>
+        {% endif %}
+    </div>
+
 {% endblock %}

@@ -4,9 +4,10 @@ from urllib import request
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib.auth.forms import AuthenticationForm
-from app.forms import MovieForm
-from .models import Movie
+from .forms import MovieForm,ReviewForm
+from .models import Movie, Review
 from django.contrib.auth import authenticate, login
+import math
 # Create your views here.
 def home(request):
     return HttpResponse("Home Page")
@@ -19,6 +20,15 @@ def template_test(request):
 
 def get_movie_info(request, id):
     try:
+        review_form = ReviewForm()
+        if request.method == 'POST':
+            review_form = ReviewForm(request.POST)
+            if review_form.is_valid():
+                review=review_form.save(commit=False)
+                review.movie_id = id            
+                review.user_id = request.user.id
+                review.save()
+                
         movie = Movie.objects.get(id=id)
 
         context = {
@@ -28,13 +38,29 @@ def get_movie_info(request, id):
         if movie.favorite.filter(pk=request.user.pk).exists():
             context['is_favorite'] = True
 
-        return render(request, 'movie.html', {'movie':movie, 'context': context,})
+        return render(request, 'movie.html', {'review_form': review_form, 'movie':movie, 'context': context,})
     except Movie.DoesNotExist:
         return render(request, '404.html')
         
-def get_movies(request):
-    movies = Movie.objects.all()
-    return render(request, 'movies.html', {'movies': movies})
+def get_movies(request, page_number):
+    page_size = 1
+
+    if page_number < 1:
+        page_number = 1
+
+    movie_count = Movie.objects.count()
+
+    last_page = math.ceil(movie_count / page_size)
+
+    pagination = {
+        'previous_page': page_number -1,
+        'current_page': page_number,
+        'next_page': page_number + 1,
+        'last_page': last_page
+    }
+    movies = Movie.objects.all()[(page_number-1)* page_size:page_number * page_size]
+
+    return render(request, 'movies.html', {'movies': movies, 'pagination':pagination})
 
 def post_movie(request):
     form = MovieForm()
